@@ -561,7 +561,7 @@ var _discourse_analyse = function (_panel, _input, _callback) {
 		// ----------------------------
 		//var _classname_prefix = 'output_discourse_';
 		_panel.find("."+_classname_prefix+"count span").html(_count);
-		_panel.find("."+_classname_prefix+"length_averge span").html(_avg);
+		_panel.find("."+_classname_prefix+"length_average span").html(_avg);
 		_panel.find("."+_classname_prefix+"length_variance span").html(_var);
 		_panel.find("."+_classname_prefix+"length_total span").html(_len);
 		_panel.find("."+_classname_prefix+"length_prop span").html(_prop);
