@@ -1,0 +1,40 @@
+body {
+  padding: 1em !important; 
+}
+
+#text_input {
+  height: 34.7em;
+  max-height: calc(100vh - 16em);
+}
+
+.result-row-1-max-height {
+  max-height: 30em;
+  overflow-y: auto;
+}
+
+.result-row-2-max-height {
+  max-height: 30em;
+  overflow-y: auto;
+}
+
+.popup {
+  display: inline-block;
+}
+
+.float-action-button {
+  position: fixed;
+  bottom: 1em;
+  right: 1em;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.14), 0 4px 8px rgba(0, 0, 0, 0.28) !important;
+}
+
+.text-setup-column {
+    max-height: calc(100vh - 5em);
+    overflow-y: auto;
+      overflow-x: hidden;
+}
+
+body.wait, 
+body.wait * {
+  cursor: wait;
+}

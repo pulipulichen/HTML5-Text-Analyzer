@@ -1,0 +1,939 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>
+            N字詞斷詞與統計
+        </title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+
+<link rel="stylesheet" href="style.css">
+        
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
+<link rel="stylesheet" href="//pulipulichen.github.io/blogger/posts/2016/12/semantic/semantic.min.css">
+<link rel="stylesheet" href="http://fontawesome.io/assets/font-awesome/css/font-awesome.css">
+<script src="//pulipulichen.github.io/blogger/posts/2016/12/semantic/semantic.min.js"></script>
+<script src="//pulipulichen.github.io/blogger/posts/2016/12/jszip.min.js"></script>
+<script src="//pulipulichen.github.io/blogger/posts/2016/12/FileSaver.min.js"></script>
+<script src="//pulipulichen.github.io/blogger/posts/2016/11/r-text-mining/wordcloud2.js"></script>
+<script src="//pulipulichen.github.io/blogger/posts/2016/12/clipboard.min.js"></script>
+<script src="//pulipulichen.github.io/blogger/posts/2016/12/smooth-scroll.min.js"></script>
+
+<!-- Sementic UI https://semantic-ui.com/collections/form.html -->
+
+<!-- ------------------------------------ -->
+
+<form id="segment_0161207" onsubmit="return false" class="ui form"> 
+<h1 class="ui horizontal divider header">
+   Text Setup
+</h1>
+  
+    <div class="ui grid">
+        <div class="eight wide column">
+			<div class="text-setup-column">
+			<!-- -------------------------- -->
+
+			
+<div class="ui horizontal divider header">
+	<i class="large file text icon"></i>
+	Text Analysis
+</div>
+			
+<div class="field">
+	<label for="segment_length">
+      Segment Length: 
+	  <div class="popup" data-position="top center" data-content="計算N字詞的N，1表示是單字詞、2表示是雙字詞"><i class="large info circle icon"></i></div>
+    </label>
+	<input class="segment-length" type="number"  value="1" id="segment_length" /> 
+</div>
+
+<div class="field">
+	<label for="remove_punctuation">
+      Remove Punctuations: 
+	  <div class="popup" data-position="top center" data-content="將會刪除的標點符號，以正規表示法設定"><i class="large info circle icon"></i></div>
+    </label>
+	<input class="remove_punctuation" type="text"  value=".,\/#!$%\^&\*;:{}=\-_`~()\[\]。，、；：「」『』（）—？！…《》～〔〕［］・　" id="remove_punctuation" /> 
+</div>
+
+<div class="fields">
+<div class="eight wide field">
+	<div class="ui toggle checkbox">
+	<input type="checkbox" id="remove_number" class="remove_number hidden">
+	<label for="remove_number">
+      Remove Numbers 
+	  <div class="popup" data-position="top center" data-content="將會刪除阿拉伯數字(只限於半形數字)"><i class="large info circle icon"></i></div>
+    </label>
+	</div>
+</div>
+
+<div class="eight wide field">
+	<div class="ui toggle checkbox">
+	<input type="checkbox" id="remove_english" class="remove_english hidden">
+	<label for="remove_english">
+      Remove English 
+	  <div class="popup" data-position="top center" data-content="將會刪除英文字(只限於半形英文)"><i class="large info circle icon"></i></div>
+    </label>
+	</div>
+</div>
+</div>
+
+<div class="fields">
+<div class="eight wide field">
+	<label for="function_words">
+		Function Words:
+		<div class="popup" data-position="top center" data-content="虛字列表，用空格分隔不同虛詞"><i class="large info circle icon"></i></div>
+	</label> 
+	
+	<input type="text" class="function-words" id="function_words" value="矣 乎 焉 歟 哉 耳 豈 之 乃 無 的 是 們 個 了 和 麼 著 嗎 吧" onfocus="this.select();" />
+</div>
+
+<div class="eight wide field">
+	<label for="punctuation">
+		Sentence Punctuations:
+		<div class="popup" data-position="top center" data-content="分隔句子的標點符號"><i class="large info circle icon"></i></div>
+	</label>
+	<input type="text" class="punctuation" id="punctuation" value="。，、；：？！" onfocus="this.select();" />
+</div>
+</div>
+
+
+<!-- -------------------------- -->
+
+<div class="ui horizontal divider header">
+	<i class="large comments icon"></i>
+	Discourse Analysis
+</div>
+
+<!-- 句前 句後 問句 驚歎句 -->
+<div class="fields">
+	<div class="four wide field">
+		<label for="discourse_prefix">
+			Prefix:
+			<div class="popup" data-position="top center" data-content="對話句開頭的符號"><i class="large info circle icon"></i></div>
+		</label> 
+		
+		<input type="text" class="discourse_prefix" id="discourse_prefix" value="：「" onfocus="this.select();" />
+	</div>
+	
+	<div class="four wide field">
+		<label for="discourse_suffix">
+			Suffix:
+			<div class="popup" data-position="top center" data-content="對話句結尾的符號"><i class="large info circle icon"></i></div>
+		</label> 
+		
+		<input type="text" class="discourse_suffix" id="discourse_suffix" value="」" onfocus="this.select();" />
+	</div>
+	
+	<div class="four wide field">
+		<label for="discourse_question">
+			Question:
+			<div class="popup" data-position="top center" data-content="問句包含的符號"><i class="large info circle icon"></i></div>
+		</label> 
+		
+		<input type="text" class="discourse_question" id="discourse_question" value="？" onfocus="this.select();" />
+	</div>
+	
+	<div class="four wide field">
+		<label for="discourse_exclamation">
+			Exclamation:
+			<div class="popup" data-position="top center" data-content="驚歎句包含的符號"><i class="large info circle icon"></i></div>
+		</label> 
+		
+		<input type="text" class="discourse_exclamation" id="discourse_exclamation" value="！" onfocus="this.select();" />
+	</div>
+	
+</div>
+
+<div class="field">
+	<label for="discourse_punctuation">
+		Discourse Punctuations:
+		<div class="popup" data-position="top center" data-content="分隔對話句子的標點符號"><i class="large info circle icon"></i></div>
+	</label> 
+	
+	<input type="text" class="discourse_punctuation" id="discourse_punctuation" value="。，、；：？！「」" onfocus="this.select();" />
+</div>
+
+
+<!-- -------------------------- -->
+<div class="ui horizontal divider header">
+	<i class="large file text icon"></i>
+	Word Cloud Analysis
+</div>
+
+<div class="fields">
+
+<div class="six wide field">
+	<label for="wordcloud_freq">
+		Only Display Top Frequency:
+		<div class="popup" data-position="top center" data-content="文字雲僅顯示出現頻率前N名的詞彙"><i class="large info circle icon"></i></div>
+	</label>
+	<input type="number" class="wordcloud-freq" value="30" id="wordcloud_freq" />
+</div>
+<div class="five wide field">
+	<label for="weight_factor">
+		Weight Factor:
+		<div class="popup" data-position="top center" data-content="文字雲中的文字大小"><i class="large info circle icon"></i></div>
+	</label> 
+	<input type="number" id="weight_factor" class="weight-factor" value="5"/>
+</div>
+<div class="five wide field">
+	<label for="canvas_size">
+		Canvas Size:
+		<div class="popup" data-position="top center" data-content="文字雲繪圖範圍"><i class="large info circle icon"></i></div>
+	</label>
+	<input type="number" class="canvas-size" id="canvas_size" value="400"/>
+</div>	
+</div>
+
+<!-- -------------------------- -->
+			</div>
+        </div>  <!-- <div class="six wide column"> -->
+
+        <div class="eight wide column">
+		
+		
+<div class="inline field">
+	<label for="text_input">
+		Paste Text here:
+	</label>
+	<div class="ui left pointing blue label">
+		<a href="https://codepen.io/pulipuli/full/VmVzwd/" target="split">Split large file</a>
+	</div>
+</div>
+<div class="field">
+	<textarea id="text_input" class="text-input textarea" onfocus="this.select();">楊過道：「別忙，還有呢。」可是他連出三蟀，盡數敗下陣來，第三隻甚至被巨蟀一口咬成兩截。楊過臉上無光，道：「不玩啦！」轉身便走。忽聽得後面草叢中嘰嘰嘰的叫了三聲，正是蟋蟀鳴叫，聲音卻頗有些古怪。武敦儒道：「又是一隻。」撥開草叢，突然向後急躍，驚道：「蛇，蛇！」楊過轉過身來，果見一條花紋斑斕的毒蛇，昂首吐舌的盤在草中。楊過拾起一塊石子，對準了摔去，正中蛇頭，那毒蛇扭曲了幾下，便即死了。只見毒蛇所盤之旁有一隻黑黝黝的小蟋蟀，相貌奇醜，卻展翅發出嘰嘰之聲。郭芙笑道：「楊哥哥，你捉這小黑鬼啊。」楊過聽出她話中有嘰嘲之意，激發了胸中傲氣，說道：「好，捉就捉。」當下將黑蟋蟀捉了過來。郭芙笑道：「你這隻小黑鬼，要來幹什麼？想跟我的無敵大將軍鬥鬥嗎？」楊過怒道：「鬥就鬥，小黑鬼也不是給心欺負的。」將黑蟀放在郭芙的瓦盆之中。說也奇怪，那大蟋蟀見到小黑蟀竟有畏懼之意，不住退縮。郭芙與武氏兄弟大聲吆喝，為大蟋蟀加勁助威。小黑蟋蟀昂頭縱躍而前，那大蟀不敢接戰，想躍出盆去。小黑蟀也即躍高，在半空咬住大蟀的尾巴，雙蟀齊落，那大蟋蟀抖了幾抖，翻轉肚腹而死。原來蟋蟀之中有一種喜與毒蟲共居，與蜈蚣共居的稱為「蜈蚣蟀」，與毒蛇共居的稱為「蛇蟀」，因身上染有毒蟲氣息，非常蟀所能敵。楊過所捉到的小黑蟀正是一隻蛇蟀。郭芙見自己的無敵大將軍一戰即死，很不高興，轉念一想，道：「楊哥哥，你這頭小黑鬼給了我罷。」楊過道：「給你麼，本來沒什麼大不了，但你為什麼罵它小黑鬼？」郭芙小嘴一撇，悻悻的道：「不給就不給，希罕嗎？」拿起瓦盆一抖，將小黑蟀倒在地上，右腳踹落，登時踏死。楊過又驚又怒，氣血上湧，滿臉脹得通紅，登時按捺不住，反手一掌，重重打了她個耳光。郭芙一楞，還沒決定哭是不哭。武修文罵道：「你這小子打人！」</textarea>
+</div>
+<div class="inline fields">
+	<label>
+		Example Text:
+	</label>
+	<button type="button" class="ui tiny button example-text" data-content="大數據（英語：Big data[1][2]，或稱巨量資料、海量資料、大資料），指的是所涉及的資料量規模巨大到無法透過人工或者計算機，在合理的時間內達到擷取、管理、處理、並整理成為人類所能解讀的形式的資訊[3][4]。在總資料量相同的情況下，與個別分析獨立的小型資料集（Data set）相比，將各個小型資料集合併後進行分析可得出許多額外的資訊和資料關聯性，可用來察覺商業趨勢、判定研究品質、避免疾病擴散、打擊犯罪或測定即時交通路況等；這樣的用途正是大型資料集盛行的原因[5][6][7]。">
+		Big data
+	</button>
+	<button type="button" class="ui tiny button example-text" data-content="楊過道：「別忙，還有呢。」可是他連出三蟀，盡數敗下陣來，第三隻甚至被巨蟀一口咬成兩截。楊過臉上無光，道：「不玩啦！」轉身便走。忽聽得後面草叢中嘰嘰嘰的叫了三聲，正是蟋蟀鳴叫，聲音卻頗有些古怪。武敦儒道：「又是一隻。」撥開草叢，突然向後急躍，驚道：「蛇，蛇！」楊過轉過身來，果見一條花紋斑斕的毒蛇，昂首吐舌的盤在草中。楊過拾起一塊石子，對準了摔去，正中蛇頭，那毒蛇扭曲了幾下，便即死了。只見毒蛇所盤之旁有一隻黑黝黝的小蟋蟀，相貌奇醜，卻展翅發出嘰嘰之聲。郭芙笑道：「楊哥哥，你捉這小黑鬼啊。」楊過聽出她話中有嘰嘲之意，激發了胸中傲氣，說道：「好，捉就捉。」當下將黑蟋蟀捉了過來。郭芙笑道：「你這隻小黑鬼，要來幹什麼？想跟我的無敵大將軍鬥鬥嗎？」楊過怒道：「鬥就鬥，小黑鬼也不是給心欺負的。」將黑蟀放在郭芙的瓦盆之中。說也奇怪，那大蟋蟀見到小黑蟀竟有畏懼之意，不住退縮。郭芙與武氏兄弟大聲吆喝，為大蟋蟀加勁助威。小黑蟋蟀昂頭縱躍而前，那大蟀不敢接戰，想躍出盆去。小黑蟀也即躍高，在半空咬住大蟀的尾巴，雙蟀齊落，那大蟋蟀抖了幾抖，翻轉肚腹而死。原來蟋蟀之中有一種喜與毒蟲共居，與蜈蚣共居的稱為「蜈蚣蟀」，與毒蛇共居的稱為「蛇蟀」，因身上染有毒蟲氣息，非常蟀所能敵。楊過所捉到的小黑蟀正是一隻蛇蟀。郭芙見自己的無敵大將軍一戰即死，很不高興，轉念一想，道：「楊哥哥，你這頭小黑鬼給了我罷。」楊過道：「給你麼，本來沒什麼大不了，但你為什麼罵它小黑鬼？」郭芙小嘴一撇，悻悻的道：「不給就不給，希罕嗎？」拿起瓦盆一抖，將小黑蟀倒在地上，右腳踹落，登時踏死。楊過又驚又怒，氣血上湧，滿臉脹得通紅，登時按捺不住，反手一掌，重重打了她個耳光。郭芙一楞，還沒決定哭是不哭。武修文罵道：「你這小子打人！」">
+		神鵰俠侶
+	</button>
+	
+</div>
+
+<div class="field">
+	<button type="button" class="fluid ui blue button start">START</button>
+</div>
+
+			
+        </div>  <!-- <div class="ten wide column"> -->
+
+    </div>
+  
+  
+<div class="result-container" id="result_container">
+
+<!-- ----------------------------------- -->
+<h2 class="ui horizontal divider header">
+  Result
+</h2>
+
+<!-- 
+[基本] [句子] [N字詞] [虛字]
+-->
+
+<div class="ui styled fluid accordion">
+	<div class="title active">
+		<i class="dropdown icon"></i>
+		Document Statistics
+	</div>
+	
+	<div class="content active">
+	
+	
+	
+<div class="ui four column doubling grid">
+	<div class="column">
+
+<div class="ui segment result-row-1-max-height">
+<div class="ui blue ribbon label">Document Statistics</div>
+
+<table class="ui celled table">
+
+<caption>
+	<div class="right aligned">
+		<button class="ui mini compact right labeled icon button copy-table">
+		  TABLE
+		  <i class="copy icon"></i>
+		</button>
+		<button class="ui mini compact right teal labeled icon button copy-value">
+		  VALUE
+		  <i class="copy icon"></i>
+		</button>
+	</div>
+</caption>
+<thead>
+    <tr>
+        <th>Property</th>
+        <th>Value</th>
+    </tr>
+</thead>
+
+    <tbody>
+    
+<tr class="output-length"><td>
+    Text Length
+    <div class="popup" data-position="top center" data-content="文字總長度，不計算空格跟標點符號"><i class="info circle icon"></i></div>
+    </td> <td><span></span></td></tr>
+
+<tr class="output-different"><td>
+    Different Words
+    <div class="popup" data-position="top center" data-content="N字詞的種類"><i class="info circle icon"></i></div>
+    </td> <td><span></span></td></tr>
+<tr class="output-entropy"><td>
+    Entropy
+    <div class="popup" data-position="top center" data-content="不均度指標，越大表示字彙種類越多"><i class="info circle icon"></i></div>
+    </td> <td><span></span></td></tr>
+<tr class="output-simpson-index"><td>
+    Simpson's Index
+    <div class="popup" data-position="top center" data-content="不均度指標，越小表示字彙種類越多"><i class="info circle icon"></i></div>
+    </td> <td><span></span></td></tr>
+
+<tr class="output_sentence_count"><td>
+    Sentence Count
+    <div class="popup" data-position="top center" data-content="句子數量"><i class="info circle icon"></i></div>
+    </td> <td><span></span></td></tr>
+<tr class="output_sentence_avg"><td>
+    Sentence Length Averge
+    <div class="popup" data-position="top center" data-content="句子平均長度"><i class="info circle icon"></i></div>
+    </td> <td><span></span></td></tr>
+<tr class="output_sentence_var"><td>
+    Sentence Length Variance
+    <div class="popup" data-position="top center" data-content="句子長度變異數。數字越大表示句子長度分佈差異越大"><i class="info circle icon"></i></div>
+    </td> <td><span></span></td></tr>
+
+<tr class="output_function_word_count"><td>
+    Function Word Count
+    <div class="popup" data-position="top center" data-content="虛字出現頻率"><i class="info circle icon"></i></div>
+    </td> <td><span></span></td></tr>
+<tr class="output_function_word_proportion"><td>
+    Function Word Proportion
+    <div class="popup" data-position="top center" data-content="虛字出現比例，算法是(虛字出現頻率/文字總長度)"><i class="info circle icon"></i></div>
+    </td> <td><span></span></td></tr>
+
+<tr class="output_discourse_count"><td>
+    Discourse Count
+    <div class="popup" data-position="top center" data-content="對話次數"><i class="info circle icon"></i></div>
+    </td> <td><span></span></td></tr>
+
+<tr class="output_discourse_length_averge"><td>
+    Discourse Length Averge
+    <div class="popup" data-position="top center" data-content="對話次數平均長度"><i class="info circle icon"></i></div>
+    </td> <td><span></span></td></tr>
+
+<tr class="output_discourse_length_variance"><td>
+    Discourse Length Variance
+    <div class="popup" data-position="top center" data-content="對話次數變異數"><i class="info circle icon"></i></div>
+    </td> <td><span></span></td></tr>
+	
+    </tbody>
+</table>
+</div>
+	
+	</div> <!-- <div class="five wide column"> -->
+	<!-- ------------------- -->
+	<div class="column">
+	
+<div class="ui segment result-row-1-max-height">
+<div class="ui blue ribbon label">Sentences Length Distribution</div>
+
+<table class="ui celled table">
+<caption>
+	<div class="right aligned">
+		<button class="ui mini compact right labeled icon button copy-table">
+		  TABLE
+		  <i class="copy icon"></i>
+		</button>
+		<button class="ui mini compact right teal labeled icon button copy-value">
+		  VALUE
+		  <i class="copy icon"></i>
+		</button>
+	</div>
+</caption>
+<thead>
+    <tr>
+        <th>Property</th>
+        <th>Value</th>
+    </tr>
+</thead>
+<tbody>
+<tr class="output_sentence_count"><td>
+    Sentence Count
+    <div class="popup" data-position="top center" data-content="句子數量"><i class="info circle icon"></i></div>
+    </td> <td><span></span></td></tr>
+<tr class="output_sentence_avg"><td>
+    Sentence Length Averge
+    <div class="popup" data-position="top center" data-content="句子平均長度"><i class="info circle icon"></i></div>
+    </td> <td><span></span></td></tr>
+<tr class="output_sentence_var"><td>
+    Sentence Length Variance
+    <div class="popup" data-position="top center" data-content="句子長度變異數。數字越大表示句子長度分佈差異越大"><i class="info circle icon"></i></div>
+    </td> <td><span></span></td></tr>
+</tbody>
+</table>
+
+<table class="output_sentence ui table">
+<caption>
+	<div class="right aligned">
+		<button class="ui mini compact right labeled icon button copy-table">
+		  TABLE
+		  <i class="copy icon"></i>
+		</button>
+		<button class="ui mini compact right teal labeled icon button copy-value">
+		  VALUE
+		  <i class="copy icon"></i>
+		</button>
+	</div>
+</caption>
+<thead>
+    <tr>
+        <th>Sentence Length</th>
+        <th>Frequency</th>
+    </tr>
+</thead>
+</table>
+</div>
+	
+	</div> <!-- <div class="three wide column"> -->
+	<!-- ------------------- -->
+	<div class="column">
+
+<div class="ui segment result-row-1-max-height">
+<div class="ui blue ribbon label">N-Length Words Distribution</div>
+
+<table class="ui celled table">
+<caption>
+	<div class="right aligned">
+		<button class="ui mini compact right labeled icon button copy-table">
+		  TABLE
+		  <i class="copy icon"></i>
+		</button>
+		<button class="ui mini compact right teal labeled icon button copy-value">
+		  VALUE
+		  <i class="copy icon"></i>
+		</button>
+	</div>
+</caption>
+<thead>
+    <tr>
+        <th>Property</th>
+        <th>Value</th>
+    </tr>
+</thead>
+<tbody>
+<tr class="output-different"><td>
+    Different Words
+    <div class="popup" data-position="top center" data-content="N字詞的種類"><i class="info circle icon"></i></div>
+    </td> <td><span></span></td></tr>
+<tr class="output-entropy"><td>
+    Entropy
+    <div class="popup" data-position="top center" data-content="不均度指標，越大表示字彙種類越多"><i class="info circle icon"></i></div>
+    </td> <td><span></span></td></tr>
+<tr class="output-simpson-index"><td>
+    Simpson's Index
+    <div class="popup" data-position="top center" data-content="不均度指標，越大表示字彙種類越多"><i class="info circle icon"></i></div>
+    </td> <td><span></span></td></tr>
+</tbody>
+</table>
+
+<table class="output ui vertical segment  table">
+<caption>
+	<div class="right aligned">
+		<button class="ui mini compact right labeled icon button copy-table">
+		  TABLE
+		  <i class="copy icon"></i>
+		</button>
+		<button class="ui mini compact right teal labeled icon button copy-value">
+		  VALUE
+		  <i class="copy icon"></i>
+		</button>
+	</div>
+</caption>
+<thead>
+    <tr>
+        <th>Word</th>
+        <th>Frequency</th>
+    </tr>
+</thead>
+</table>
+</div>	
+	</div> <!-- <div class="five wide column"> -->
+	<!-- ------------------- -->
+	<div class="column">
+
+<div class="ui segment result-row-1-max-height">
+<div class="ui blue ribbon label">Function Words Distribution</div>
+
+<table class="ui celled table">
+<caption>
+	<div class="right aligned">
+		<button class="ui mini compact right labeled icon button copy-table">
+		  TABLE
+		  <i class="copy icon"></i>
+		</button>
+		<button class="ui mini compact right teal labeled icon button copy-value">
+		  VALUE
+		  <i class="copy icon"></i>
+		</button>
+	</div>
+</caption>
+<thead>
+    <tr>
+        <th>Property</th>
+        <th>Value</th>
+    </tr>
+</thead>
+<tbody>
+	<tr class="output_function_word_count"><td>
+    Function Word Count
+    <div class="popup" data-position="top center" data-content="虛字出現頻率"><i class="info circle icon"></i></div>
+    </td> <td><span></span></td></tr>
+<tr class="output_function_word_proportion"><td>
+    Function Word Proportion
+    <div class="popup" data-position="top center" data-content="虛字出現比例，算法是(虛字出現頻率/文字總長度)"><i class="info circle icon"></i></div>
+    </td> <td><span></span></td></tr>
+</tbody>
+</table>
+
+<table class="output_function_word ui table">
+<caption>
+	<div class="right aligned">
+		<button class="ui mini compact right labeled icon button copy-table">
+		  TABLE
+		  <i class="copy icon"></i>
+		</button>
+		<button class="ui mini compact right teal labeled icon button copy-value">
+		  VALUE
+		  <i class="copy icon"></i>
+		</button>
+	</div>
+</caption>
+<thead>
+    <tr>
+        <th>Word</th>
+        <th>Frequency</th>
+    </tr>
+</thead>
+</table>
+</div>
+
+	</div> <!-- <div class="three wide column"> -->
+</div>
+
+	</div> <!-- <div class="content active"> -->
+
+<!-- ----------------------------- -->
+	
+	<div class="title active">
+		<i class="dropdown icon"></i>
+		Discourse Analysis
+	</div>
+	<div class="content active">
+		
+	<div class="ui three column doubling grid">
+	
+<!-- ----------------------------- -->
+	
+		<div class="column">
+<div class="ui segment result-row-2-max-height">
+<div class="ui blue ribbon label">Total</div>
+<table class="ui celled table">
+<caption>
+	<div class="right aligned">
+		<button class="ui mini compact right labeled icon button copy-table">
+		  TABLE
+		  <i class="copy icon"></i>
+		</button>
+		<button class="ui mini compact right teal labeled icon button copy-value">
+		  VALUE
+		  <i class="copy icon"></i>
+		</button>
+	</div>
+</caption>
+<thead>
+    <tr>
+        <th>Property</th>
+        <th>Value</th>
+    </tr>
+</thead>
+<tbody>
+<tr class="output_discourse_count"><td>
+    Discourse Count
+    <div class="popup" data-position="top center" data-content="對話次數"><i class="info circle icon"></i></div>
+    </td> <td><span></span></td></tr>
+
+<tr class="output_discourse_length_averge"><td>
+    Discourse Length Averge
+    <div class="popup" data-position="top center" data-content="對話次數平均長度"><i class="info circle icon"></i></div>
+    </td> <td><span></span></td></tr>
+
+<tr class="output_discourse_length_variance"><td>
+    Discourse Length Variance
+    <div class="popup" data-position="top center" data-content="對話次數變異數"><i class="info circle icon"></i></div>
+    </td> <td><span></span></td></tr>	
+	
+<tr class="output_discourse_length_total"><td>
+    Discourse Total Length
+    <div class="popup" data-position="top center" data-content="對話次數總長度"><i class="info circle icon"></i></div>
+    </td> <td><span></span></td></tr>
+	
+<tr class="output_discourse_length_prop"><td>
+    Discourse Proportion
+    <div class="popup" data-position="top center" data-content="對話次數比例"><i class="info circle icon"></i></div>
+    </td> <td><span></span></td></tr>	
+</tbody>
+</table>
+
+<table class="output_discourse_distribution ui table">
+<caption>
+	<div class="right aligned">
+		<button class="ui mini compact right labeled icon button copy-table">
+		  TABLE
+		  <i class="copy icon"></i>
+		</button>
+		<button class="ui mini compact right teal labeled icon button copy-value">
+		  VALUE
+		  <i class="copy icon"></i>
+		</button>
+	</div>
+</caption>
+<thead>
+    <tr>
+        <th>Discourse Length</th>
+        <th>Frequency</th>
+    </tr>
+</thead>
+</table>
+</div>
+		
+		</div> <!-- <div class="column"> -->
+		
+<!-- ----------------------------- -->
+	
+		<div class="column">
+<div class="ui segment result-row-2-max-height">
+<div class="ui blue ribbon label">Normal</div>
+
+
+<table class="ui celled table">
+<caption>
+	<div class="right aligned">
+		<button class="ui mini compact right labeled icon button copy-table">
+		  TABLE
+		  <i class="copy icon"></i>
+		</button>
+		<button class="ui mini compact right teal labeled icon button copy-value">
+		  VALUE
+		  <i class="copy icon"></i>
+		</button>
+	</div>
+</caption>
+<thead>
+    <tr>
+        <th>Property</th>
+        <th>Value</th>
+    </tr>
+</thead>
+<tbody>
+<tr class="output_normal_discourse_count"><td>
+    Normal Discourse Count
+    <div class="popup" data-position="top center" data-content="一般對話次數"><i class="info circle icon"></i></div>
+    </td> <td><span></span></td></tr>
+
+<tr class="output_normal_discourse_length_averge"><td>
+    Normal Discourse Length Averge
+    <div class="popup" data-position="top center" data-content="一般對話次數平均長度"><i class="info circle icon"></i></div>
+    </td> <td><span></span></td></tr>
+
+<tr class="output_normal_discourse_length_variance"><td>
+    Normal Discourse Length Variance
+    <div class="popup" data-position="top center" data-content="一般對話次數變異數"><i class="info circle icon"></i></div>
+    </td> <td><span></span></td></tr>	
+	
+<tr class="output_normal_discourse_length_total"><td>
+    Normal Discourse Total Length
+    <div class="popup" data-position="top center" data-content="一般對話次數總長度"><i class="info circle icon"></i></div>
+    </td> <td><span></span></td></tr>
+	
+<tr class="output_normal_discourse_length_prop"><td>
+    Normal Discourse Proportion
+    <div class="popup" data-position="top center" data-content="一般對話次數比例"><i class="info circle icon"></i></div>
+    </td> <td><span></span></td></tr>	
+</tbody>
+</table>
+
+<table class="output_normal_discourse_distribution ui table">
+<caption>
+	<div class="right aligned">
+		<button class="ui mini compact right labeled icon button copy-table">
+		  TABLE
+		  <i class="copy icon"></i>
+		</button>
+		<button class="ui mini compact right teal labeled icon button copy-value">
+		  VALUE
+		  <i class="copy icon"></i>
+		</button>
+	</div>
+</caption>
+<thead>
+    <tr>
+        <th>Normal Discourse Length</th>
+        <th>Frequency</th>
+    </tr>
+</thead>
+</table>
+</div>
+		</div> <!-- <div class="column"> -->
+		
+<!-- ----------------------------- -->
+	
+		<div class="column">
+<div class="ui segment result-row-2-max-height">
+<div class="ui blue ribbon label">Question</div>
+		
+<table class="ui celled table">
+<caption>
+	<div class="right aligned">
+		<button class="ui mini compact right labeled icon button copy-table">
+		  TABLE
+		  <i class="copy icon"></i>
+		</button>
+		<button class="ui mini compact right teal labeled icon button copy-value">
+		  VALUE
+		  <i class="copy icon"></i>
+		</button>
+	</div>
+</caption>
+<thead>
+    <tr>
+        <th>Property</th>
+        <th>Value</th>
+    </tr>
+</thead>
+<tbody>
+<tr class="output_question_discourse_count"><td>
+    Question Discourse Count
+    <div class="popup" data-position="top center" data-content="疑問對話次數"><i class="info circle icon"></i></div>
+    </td> <td><span></span></td></tr>
+
+<tr class="output_question_discourse_length_averge"><td>
+    Question Discourse Length Averge
+    <div class="popup" data-position="top center" data-content="疑問對話次數平均長度"><i class="info circle icon"></i></div>
+    </td> <td><span></span></td></tr>
+
+<tr class="output_question_discourse_length_variance"><td>
+    Question Discourse Length Variance
+    <div class="popup" data-position="top center" data-content="疑問對話次數變異數"><i class="info circle icon"></i></div>
+    </td> <td><span></span></td></tr>	
+	
+<tr class="output_question_discourse_length_total"><td>
+    Question Discourse Total Length
+    <div class="popup" data-position="top center" data-content="疑問對話次數總長度"><i class="info circle icon"></i></div>
+    </td> <td><span></span></td></tr>
+	
+<tr class="output_question_discourse_length_prop"><td>
+    Question Discourse Proportion
+    <div class="popup" data-position="top center" data-content="疑問對話次數比例"><i class="info circle icon"></i></div>
+    </td> <td><span></span></td></tr>	
+</tbody>
+</table>
+
+<table class="output_question_discourse_distribution ui table">
+<caption>
+	<div class="right aligned">
+		<button class="ui mini compact right labeled icon button copy-table">
+		  TABLE
+		  <i class="copy icon"></i>
+		</button>
+		<button class="ui mini compact right teal labeled icon button copy-value">
+		  VALUE
+		  <i class="copy icon"></i>
+		</button>
+	</div>
+</caption>
+<thead>
+    <tr>
+        <th>Question Discourse Length</th>
+        <th>Frequency</th>
+    </tr>
+</thead>
+</table>
+</div>
+		
+		</div> <!-- <div class="column"> -->
+		
+<!-- ----------------------------- -->
+	
+		<div class="column ">
+
+<div class="ui segment result-row-2-max-height">
+<div class="ui blue ribbon label">Exclamation</div>
+		
+<table class="ui celled table">
+<caption>
+	<div class="right aligned">
+		<button class="ui mini compact right labeled icon button copy-table">
+		  TABLE
+		  <i class="copy icon"></i>
+		</button>
+		<button class="ui mini compact right teal labeled icon button copy-value">
+		  VALUE
+		  <i class="copy icon"></i>
+		</button>
+	</div>
+</caption>
+<thead>
+    <tr>
+        <th>Property</th>
+        <th>Value</th>
+    </tr>
+</thead>
+<tbody>
+<tr class="output_exclamation_discourse_count"><td>
+    Exclamation Discourse Count
+    <div class="popup" data-position="top center" data-content="驚歎對話次數"><i class="info circle icon"></i></div>
+    </td> <td><span></span></td></tr>
+
+<tr class="output_exclamation_discourse_length_averge"><td>
+    Exclamation Discourse Length Averge
+    <div class="popup" data-position="top center" data-content="驚歎對話次數平均長度"><i class="info circle icon"></i></div>
+    </td> <td><span></span></td></tr>
+
+<tr class="output_exclamation_discourse_length_variance"><td>
+    Exclamation Discourse Length Variance
+    <div class="popup" data-position="top center" data-content="驚歎對話次數變異數"><i class="info circle icon"></i></div>
+    </td> <td><span></span></td></tr>	
+	
+<tr class="output_exclamation_discourse_length_total"><td>
+    Exclamation Discourse Total Length
+    <div class="popup" data-position="top center" data-content="驚歎對話次數總長度"><i class="info circle icon"></i></div>
+    </td> <td><span></span></td></tr>
+	
+<tr class="output_exclamation_discourse_length_prop"><td>
+    Exclamation Discourse Proportion
+    <div class="popup" data-position="top center" data-content="驚歎對話次數比例"><i class="info circle icon"></i></div>
+    </td> <td><span></span></td></tr>	
+</tbody>
+</table>
+
+<table class="output_exclamation_discourse_distribution ui table">
+<caption>
+	<div class="right aligned">
+		<button class="ui mini compact right labeled icon button copy-table">
+		  TABLE
+		  <i class="copy icon"></i>
+		</button>
+		<button class="ui mini compact right teal labeled icon button copy-value">
+		  VALUE
+		  <i class="copy icon"></i>
+		</button>
+	</div>
+</caption>
+<thead>
+    <tr>
+        <th>Exclamation Discourse Length</th>
+        <th>Frequency</th>
+    </tr>
+</thead>
+</table>
+</div>
+		</div> <!-- <div class="column"> -->
+		
+		<!-- ----------------------------- -->
+	
+		<div class="column">
+<div class="ui segment result-row-2-max-height">
+<div class="ui blue ribbon label">Neighbor Before</div>
+
+<table class="output_discourse_before_distribution ui table">
+<caption>
+	<div class="right aligned">
+		<button class="ui mini compact right labeled icon button copy-table">
+		  TABLE
+		  <i class="copy icon"></i>
+		</button>
+		<button class="ui mini compact right teal labeled icon button copy-value">
+		  VALUE
+		  <i class="copy icon"></i>
+		</button>
+	</div>
+</caption>
+<thead>
+    <tr>
+        <th>Before Discourse</th>
+        <th>Frequency</th>
+    </tr>
+</thead>
+</table>
+</div>
+		</div> <!-- <div class="column"> -->
+		
+		<!-- ----------------------------- -->
+	
+		<div class="column">
+<div class="ui segment result-row-2-max-height">
+<div class="ui blue ribbon label">Neighbor After</div>
+
+<table class="output_discourse_after_distribution ui table">
+<caption>
+	<div class="right aligned">
+		<button class="ui mini compact right labeled icon button copy-table">
+		  TABLE
+		  <i class="copy icon"></i>
+		</button>
+		<button class="ui mini compact right teal labeled icon button copy-value">
+		  VALUE
+		  <i class="copy icon"></i>
+		</button>
+	</div>
+</caption>
+<thead>
+    <tr>
+        <th>After Discourse</th>
+        <th>Frequency</th>
+    </tr>
+</thead>
+</table>
+
+</div>
+		</div> <!-- <div class="column"> -->
+		
+	</div> <!-- <div class="ui one column doubling grid"> -->
+		
+	</div> <!-- <div class="content active"> -->
+<!-- ----------------------------- -->
+	<div class="title active">
+		<i class="dropdown icon"></i>
+		Word Cloud
+	</div>
+	<div class="content active">
+
+<div class="word-cloud ui vertical segment">
+  <canvas id="my_canvas" height="10" />
+  </div>
+	<div class="ui below pointing blue label">
+		Too small? Try to change "Weight Factor" and "Canvas Size" in Word Cloud Configuration.
+	</div>
+	
+	</div> <!-- <div class="content active"> -->
+</div>
+
+</div> <!-- <div class="result-container"> -->
+
+<button class="circular large teal ui icon button float-action-button" title="修改文字">
+		<i class="write icon"></i>
+</button>
+
+</form>
+
+<script src="script.js"></script>
+
+    </body>
+</html>
