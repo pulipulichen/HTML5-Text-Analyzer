@@ -289,10 +289,14 @@ var _draw_wordcloud = function (_panel, _ary, _callback) {
 
     var _freq_count = 0;
     var _freq_last;
+    var _max_freq = 0
     var _list = [];
     for (var _i = 0; _i < _ary.length; _i++) {
         var _word = _ary[_i].key;
         var _freq = _ary[_i].value;
+        if (_freq > _max_freq) {
+          _max_freq = _freq
+        }
 
         _list.push([_word, _freq]);
 
@@ -318,12 +322,15 @@ var _draw_wordcloud = function (_panel, _ary, _callback) {
 
     var _canvasSize = parseInt(_panel.find(".canvas-size").val(), 10);
 
-    
+    _weightFactor = _canvasSize / _max_freq / 25 * _weightFactor
+  
     _panel.find(".word-cloud").html('<canvas id="my_canvas" height="'+_canvasSize*0.6+'" width="'+_canvasSize+'"  />');
+
+    //console.log(JSON.stringify(_list))
 
     WordCloud(document.getElementById('my_canvas')
         , { list: _list
-            , weightFactor: _weightFactor } );
+            , weightFactor: _weightFactor} );
 
 	if (typeof(_callback) === "function") {
 		setTimeout(function() {
@@ -795,4 +802,13 @@ $(function () {
   $(".float-action-button").click(_float_action_button);
   
   _accordion_setup();
+  
+  setTimeout(function () {
+    $("#segment_0161207 button.start").click()
+    setTimeout(function () {
+      document.querySelector(".word-cloud").scrollIntoView(false);
+    }, 2000)
+    
+  }, 1000)
+  
 });

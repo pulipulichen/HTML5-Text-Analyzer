@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Word cloud demo</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
+    <script src="//pulipulichen.github.io/blogger/posts/2016/11/r-text-mining/wordcloud2.js"></script>
+  </head>
+  <body>
+    
+    <canvas id="my_canvas" height="240" width="400" style='border: 1px solid red'  />
+    <script>
+      var _list = [["的",4],["問",4],["了",3],["昨",2],["晚",2],["上",2],["麼",2],["樣",2],["像",2],["就",2],["一",2],["家",2],["裡",2],["人",2],["天",1],["約",1],["會",1],["怎",1],["介",1],["紹",1],["對",1],["不",1],["錯",1],["吧",1],["別",1],["忘",1],["已",1],["經",1],["被",1],["夠",1],["他",1],["來",1],["舅",1],["媽",1],["才",1],["見",1],["面",1],["我",1],["堆",1],["題",1],["工",1],["作",1],["薪",1],["水",1],["多",1],["少",1],["老",1],["大",1],["嗎",1],["有",1],["哪",1],["些",1],["是",1],["警",1],["察",1],["犯",1],["閉",1],["嘴",1],["什",1],["都",1],["說",1]]
+      var _weightFactor = 5
+      var _width = 400
+      var _max_freq = 4
+      
+      // 400 / 4 = 100
+      
+      WordCloud(document.getElementById('my_canvas')
+        , { list: _list
+            , weightFactor: 5*4} );
+      // 4 * 5 = 20 
+      // 20 * 4
+      
+      //400
+    </script>
+  </body>
+</html>
