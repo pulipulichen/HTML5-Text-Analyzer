@@ -29,18 +29,39 @@ var _segment_0161207 = function () {
 				// ----------------------------------
 				var _data = {};
 
-				var _len = parseInt(_panel.find(".segment-length").val(), 10);
-				for (var _i = 0; _i < _input.length - _len + 1; _i++) {
-					var _word = _input.substr(_i, _len);
-					if (_word.indexOf(" ") > -1) {
-						continue;
-					}
+                var _seg_type = _panel.find(".segment-type").val()
+                if (_seg_type === "fixed_length") {
+                  var _len = parseInt(_panel.find(".segment-length").val(), 10);
+                  for (var _i = 0; _i < _input.length - _len + 1; _i++) {
+                      var _word = _input.substr(_i, _len);
+                      if (_word.indexOf(" ") > -1) {
+                          continue;
+                      }
 
-					if (typeof(_data[_word]) === "undefined") {
-						_data[_word] = 0;
-					}
-					_data[_word]++;
-				}
+                      if (typeof(_data[_word]) === "undefined") {
+                          _data[_word] = 0;
+                      }
+                      _data[_word]++;
+                  }
+                }
+                else {
+                  var _delimiter = " "
+                  if (_seg_type === "comma") {
+                    _delimiter = ","
+                  }
+                  if (_seg_type === "line") {
+                    _delimiter = "\n"
+                  }
+                  
+                  var _word_array = _input.split(_delimiter)
+                  for (var _i = 0; _i < _word_array.length; _i++) {
+                    var _word = _word_array[_i]
+                    if (typeof(_data[_word]) === "undefined") {
+                          _data[_word] = 0;
+                      }
+                      _data[_word]++;
+                  }
+                }
 				
 				// ----------------------------------
 
@@ -803,6 +824,7 @@ $(function () {
   
   _accordion_setup();
   
+  /*
   setTimeout(function () {
     $("#segment_0161207 button.start").click()
     setTimeout(function () {
@@ -810,5 +832,6 @@ $(function () {
     }, 2000)
     
   }, 1000)
+  */
   
 });
