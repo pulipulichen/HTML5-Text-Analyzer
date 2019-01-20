@@ -5,7 +5,8 @@ var _segment_0161207 = function () {
 
 	_segment_0161207_start();
 	
-    var _input = _panel.find(".text-input").val();
+    var _input = _panel.find(".text-input").val().trim();
+    var _original_input = _input;
 
 	//console.log("before _count_sentence");
     _count_sentence(_panel, _input, function() {
@@ -30,6 +31,24 @@ var _segment_0161207 = function () {
 				var _data = {};
 
                 var _seg_type = _panel.find(".segment-type").val()
+                if (_seg_type === "auto") {
+                  var _slice = _original_input.slice(0, 20).trim()
+                  //console.log(_slice)
+                  if (_slice.split(" ").length > 3) {
+                    _seg_type = "space"
+                  }
+                  else if (_slice.split(",").length > 3) {
+                    _seg_type = "comma"
+                  }
+                  else if (_slice.split("\n").length > 3) {
+                    _seg_type = "line"
+                  }
+                  else {
+                    _seg_type = 'fixed_length'
+                  }
+                  //console.log(_seg_type)
+                }
+                
                 if (_seg_type === "fixed_length") {
                   var _len = parseInt(_panel.find(".segment-length").val(), 10);
                   for (var _i = 0; _i < _input.length - _len + 1; _i++) {
@@ -46,10 +65,13 @@ var _segment_0161207 = function () {
                 }
                 else {
                   var _delimiter = " "
+                  if (_seg_type === "space") {
+                    _delimiter = " "
+                  }
                   if (_seg_type === "comma") {
                     _delimiter = ","
                   }
-                  if (_seg_type === "line") {
+                  else if (_seg_type === "line") {
                     _delimiter = "\n"
                   }
                   
