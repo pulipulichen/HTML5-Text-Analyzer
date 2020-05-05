@@ -877,7 +877,8 @@ $(function () {
 
 var popupWordCloud = function (text) {
 
-  var popup = window.open('d3-cloud/index.html', '_blank');
+  //var popup = window.open('d3-cloud/index.html', '_blank');
+  var popup = window.open('//pulipulichen.github.io/d3-cloud/index.html', '_blank');
   
   // When the popup has fully loaded, if not blocked by a popup blocker:
 
@@ -898,3 +899,7 @@ var d3cloudTextParsing = function (ary) {
   
   return output.join(' ')
 }
+
+window.addEventListener("message", (e) => {
+  console.log(e.data.svg)
+}, true);

@@ -14,9 +14,25 @@ function receiveMessage(event)
           && typeof(event.data.text) === 'string' 
           && event.data.text.trim().length > 0) {
     document.getElementById('text').value = event.data.text.trim()
-    //setTimeout(function () {
-      document.getElementById('go').click()
-    //}, 3000)
+    document.getElementById('go').click()
+    
+    // 等待svg讀取完成
+    var lastSVG
+    var waitSVG = function () {
+      var svg = document.getElementById('vis').innerHTML
+      if (lastSVG !== svg) {
+        lastSVG = svg
+        setTimeout(function () {
+          waitSVG()
+        }, 1000)
+      }
+      else {
+        event.source.postMessage({
+          svg: svg
+        },event.origin);
+      }
+    }
+    waitSVG()
   }
   // Assuming you've verified the origin of the received message (which
   // you must do in any case), a convenient idiom for replying to a
