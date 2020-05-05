@@ -1,5 +1,5 @@
 var _panel = $("#segment_0161207");
-
+var d3cloudText = ''
 var _segment_0161207 = function () {
     var _panel = $("#segment_0161207");
 
@@ -104,12 +104,23 @@ var _segment_0161207 = function () {
 
 							// -----------------
 							//console.log("before _draw_wordcloud");
+              //console.log(_ary)
+              d3cloudText = d3cloudTextParsing(_ary)
 							_draw_wordcloud(_panel, _ary, function () {
 								//console.log("before _count_function_words");
 								_count_function_words(_panel, _input, function () {
 									_segment_0161207_finish();
 								});
 							});
+              /*
+              drawD3Cloud(d3cloudArrayConvert(_ary), function () {
+								//console.log("before _count_function_words");
+								
+                _count_function_words(_panel, _input, function () {
+                  _segment_0161207_finish();
+                });
+							});
+              */
 
 						});	//_sort_ary_async(_data, function(_ary) {
 
@@ -834,6 +845,7 @@ var _float_action_button = function () {
 
 // ----------------------------
 
+
 $(function () {
   $("#segment_0161207 button.start").click(_segment_0161207);
   //$("#segment_0161207 .text-input").change(_segment_0161207);
@@ -844,6 +856,11 @@ $(function () {
   $("button.copy-value").click(_copy_table_value);
   $(".float-action-button").click(_float_action_button);
   
+  $(".try-d3-cloud").click(function () {
+    var text = d3cloudText
+    popupWordCloud(text)
+  });
+  
   _accordion_setup();
   
   /*
@@ -851,9 +868,33 @@ $(function () {
     $("#segment_0161207 button.start").click()
     setTimeout(function () {
       document.querySelector(".word-cloud").scrollIntoView(false);
-    }, 2000)
+    }, 5000)
     
   }, 1000)
   */
   
 });
+
+var popupWordCloud = function (text) {
+
+  var popup = window.open('d3-cloud/index.html', '_blank');
+  
+  // When the popup has fully loaded, if not blocked by a popup blocker:
+
+  // This will successfully queue a message to be sent to the popup, assuming
+  // the window hasn't changed its location.
+  setTimeout(function () {
+    popup.postMessage({text: text}, "*");
+  }, 1000)
+}
+
+var d3cloudTextParsing = function (ary) {
+  var output = []
+  ary.forEach(function (item) {
+    for (i = 0; i < item.value; i++) {
+      output.push(item.key)
+    }
+  })
+  
+  return output.join(' ')
+}

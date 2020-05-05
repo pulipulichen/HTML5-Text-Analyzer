@@ -2,7 +2,7 @@
 <html>
     <head>
         <title>
-            N字詞斷詞與統計
+            Text Analyzer
         </title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -15,13 +15,17 @@
 <script src="vendors/jquery/jquery.min.js"></script>
 <link rel="stylesheet" href="vendors/semantic-ui/semantic.min.css">
 <!-- <link rel="stylesheet" href="http://fontawesome.io/assets/font-awesome/css/font-awesome.css"> -->
-<script src="vendors/semantic-ui/semantic/semantic.min.js"></script>
+<script src="vendors/semantic-ui/semantic.min.js"></script>
 <script src="vendors/jszip/jszip.min.js"></script>
 <script src="vendors/jszip/FileSaver.min.js"></script>
 <script src="vendors/wordcloud2/wordcloud2.js"></script>
 <script src="vendors/clipboard/clipboard.min.js"></script>
 <script src="vendors/smooth-scroll/smooth-scroll.min.js"></script>
 
+<!--
+<script src="vendors/d3-cloud/d3.v5.min.js"></script>
+<script src="vendors/d3-cloud/d3.layout.cloud.min.js"></script>
+-->
 <!-- Sementic UI https://semantic-ui.com/collections/form.html -->
 
 <!-- ------------------------------------ -->
@@ -946,10 +950,15 @@
 	<div class="content active">
 
 <div class="word-cloud ui vertical segment">
-  <canvas id="my_canvas" height="10" />
+  <!--<canvas id="my_canvas" height="10" />-->
+  <div id="tag" style="border: 1px solid #eee; height: 320px; width:525px;"></div>
+
   </div>
 	<div class="ui below pointing blue label">
 		Too small? Try to change "Weight Factor" and "Canvas Size" in Word Cloud Configuration.
+    <button type="button" class="try-d3-cloud ui mini button">
+      Try D3 Cloud
+    </button>
 	</div>
 	
 	</div> <!-- <div class="content active"> -->
@@ -963,6 +972,9 @@
 
 </form>
 
+<!--
+<script src="scripts/d3-cloud.js"></script>
+-->
 <script src="script.js"></script>
 
     </body>
