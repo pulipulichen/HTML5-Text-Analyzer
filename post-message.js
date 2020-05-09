@@ -1,8 +1,7 @@
 let api = PuliPostMessageAPI()
 
-//let url = '//pulipulichen.github.io/d3-cloud/index.html'
-//let url = '//pulipulichen.github.io/d3-cloud/index.html'
-let url = 'http://localhost:8383/d3-cloud/index.html'
+let url = '//pulipulichen.github.io/d3-cloud/index.html'
+//let url = 'http://localhost:8383/d3-cloud/index.html'
 let options = {
   mode: 'popup'
 }
