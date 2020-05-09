@@ -35,6 +35,7 @@ var d3cloudTextParsing = function (ary) {
   return output.join(' ')
 }
 
-window.addEventListener("message", (e) => {
-  console.log(e.data.svg)
-}, true);
+api.addReceiveListener(function (data) {
+  $('#text_input').val(data)
+  $("#segment_0161207 button.start").click();
+})
