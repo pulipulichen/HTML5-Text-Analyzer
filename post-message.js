@@ -36,6 +36,7 @@ var d3cloudTextParsing = function (ary) {
 }
 
 api.addReceiveListener(function (data) {
+  //console.log('收到')
   $('#text_input').val(data)
   $("#segment_0161207 button.start").click();
 })
